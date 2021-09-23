@@ -1,0 +1,16 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "SDL",
+        "repositoryURL": "git@github.com:ARPGLTD/SDL.git",
+        "state": {
+          "branch": "SwiftPackage",
+          "revision": "df9fcd6ba241e70736cadc986c5ce4a4227a7702",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}
