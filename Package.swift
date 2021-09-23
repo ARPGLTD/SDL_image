@@ -239,9 +239,7 @@ let package = Package(
     name: "SDL_image",
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
-        .library(
-            name: "SDL_image",
-            targets: ["SDL_image"]),
+        .library(name: "SDL_image", type: .dynamic, targets: ["SDL_image"]),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
