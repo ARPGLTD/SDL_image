@@ -216,7 +216,7 @@ imageConfig.sourcePaths = [
 ]
 
 imageConfig.cflags = [
-//    .define("SDL_IMAGE_USE_COMMON_BACKEND", to: "1"),
+    .define("SDL_IMAGE_USE_COMMON_BACKEND", to: "1"),
     .define("LOAD_BMP", to: "1"),
     .define("LOAD_GIF", to: "1"),
     .define("LOAD_JPG", to: "1"),
@@ -227,9 +227,8 @@ imageConfig.cflags = [
     .define("LOAD_SVG", to: "1"),
     .define("LOAD_TGA", to: "1"),
     .define("LOAD_TIF", to: "1"),
-//    .define("LOAD_XPM", to: "1"),
-//        .define("LOAD_XV", to: "1"),
-    .unsafeFlags(["-I../libpng/Include"]),  // <png.h>
+    .define("LOAD_XPM", to: "1"),
+    .define("LOAD_XV", to: "1"),
 ]
 
 let package = Package(
