@@ -29,28 +29,16 @@ zlibConfig.cflags = [
     .define("HAVE_STDARG_H", to: "1")
 ]
 
-imageConfig.cflags = [
-    .define("SDL_IMAGE_USE_COMMON_BACKEND", to: "1"),
-    .define("LOAD_BMP", to: "1"),
-//        .define("LOAD_GIF", to: "1"),
-    .define("LOAD_JPG", to: "1"),
-//        .define("LOAD_LBM", to: "1"),
-//        .define("LOAD_PCX", to: "1"),
-    .define("LOAD_PNG", to: "1"),
-//        .define("LOAD_PNM", to: "1"),
-//        .define("LOAD_SVG", to: "1"),
-//        .define("LOAD_TGA", to: "1"),
-//        .define("LOAD_TIF", to: "1"),
-//        .define("LOAD_XPM", to: "1"),
-//        .define("LOAD_XV", to: "1"),
-    .unsafeFlags(["-I../libpng/Include"]),  // <png.h>
-]
-
 imageConfig.libraryType = .dynamic
 
 #elseif os(Linux)
 
 #elseif os(Windows)
+
+tiffConfig.cflags = [
+    .define("Z_SOLO", to: "1"),
+//    .unsafeFlags(["-I../external_zlib/Include"]),  // "zlib.h"
+]
 
 #endif
 
@@ -171,30 +159,29 @@ tiffConfig.sourcePaths = [
     "src/libtiff/tif_swab.c",
     "src/libtiff/tif_thunder.c",
     "src/libtiff/tif_tile.c",
-    "src/libtiff/tif_unix.c",
     "src/libtiff/tif_version.c",
     "src/libtiff/tif_warning.c",
     "src/libtiff/tif_webp.c",
-//        "src/libtiff/tif_win32.c",
     "src/libtiff/tif_write.c",
     "src/libtiff/tif_zip.c",
     "src/libtiff/tif_zstd.c",
-//        "src/port/dummy.c",
-//        "src/port/getopt.c",
-//        "src/port/lfind.c",
-//        "src/port/snprintf.c",
-//        "src/port/strcasecmp.c",
-//        "src/port/strtol.c",
-//        "src/port/strtoll.c",
-//        "src/port/strtoul.c",
-//        "src/port/strtoull.c",
 ]
+
+#if os(macOS) || os(Linux)
+tiffConfig.sourcePaths += [
+    "src/libtiff/tif_unix.c",
+]
+#elseif os(Windows)
+tiffConfig.sourcePaths += [
+    "src/libtiff/tif_win32.c",
+]
+#endif
 
 zlibConfig.sourcePaths = [
     "src/adler32.c",
     "src/compress.c",
-//        "src/contrib/blast/blast.c",
-//        "src/crc32.c",
+    "src/crc32.c",
+    "src/deflate.c",
     "src/gzclose.c",
     "src/gzlib.c",
     "src/gzread.c",
@@ -226,6 +213,23 @@ imageConfig.sourcePaths = [
     "src/IMG_xpm.c",
     "src/IMG_xv.c",
     "src/IMG_xxx.c",
+]
+
+imageConfig.cflags = [
+//    .define("SDL_IMAGE_USE_COMMON_BACKEND", to: "1"),
+    .define("LOAD_BMP", to: "1"),
+    .define("LOAD_GIF", to: "1"),
+    .define("LOAD_JPG", to: "1"),
+    .define("LOAD_LBM", to: "1"),
+    .define("LOAD_PCX", to: "1"),
+    .define("LOAD_PNG", to: "1"),
+    .define("LOAD_PNM", to: "1"),
+    .define("LOAD_SVG", to: "1"),
+    .define("LOAD_TGA", to: "1"),
+    .define("LOAD_TIF", to: "1"),
+//    .define("LOAD_XPM", to: "1"),
+//        .define("LOAD_XV", to: "1"),
+    .unsafeFlags(["-I../libpng/Include"]),  // <png.h>
 ]
 
 let package = Package(
@@ -260,6 +264,7 @@ let package = Package(
         ),
         .target(
             name: "libtiff",
+            dependencies: ["external_zlib"],
             exclude: tiffConfig.excludePaths,
             sources: tiffConfig.sourcePaths,
             publicHeadersPath: "Include",
