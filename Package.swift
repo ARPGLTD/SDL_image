@@ -23,7 +23,7 @@ jpegConfig.cflags = [
     // .unsafeFlags(["-I./Include"]),  // <jpeglib.h>
 ]
 
-zlipConfig.cflags = [
+zlibConfig.cflags = [
     // configure sets these.
     .define("HAVE_UNISTD_H", to: "1"),
     .define("HAVE_STDARG_H", to: "1")
