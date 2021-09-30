@@ -6,7 +6,6 @@ import PackageDescription
 struct TargetConfiguration {
     var cflags : [CSetting] = []
     var lflags : [LinkerSetting] = []
-    var libraryType : Product.Library.LibraryType?
     var sourcePaths : [String] = []
     var excludePaths : [String] = []
 }
@@ -28,8 +27,6 @@ zlibConfig.cflags = [
     .define("HAVE_UNISTD_H", to: "1"),
     .define("HAVE_STDARG_H", to: "1")
 ]
-
-imageConfig.libraryType = .dynamic
 
 #elseif os(Linux)
 
@@ -175,6 +172,13 @@ tiffConfig.sourcePaths += [
 tiffConfig.sourcePaths += [
     "src/libtiff/tif_win32.c",
 ]
+
+imageConfig.lflags = [
+    .linkedLibrary("swiftCore"),
+    .linkedLibrary("ucrt"),
+    .linkedLibrary("VCRUNTIME"),
+]
+
 #endif
 
 zlibConfig.sourcePaths = [
@@ -229,13 +233,14 @@ imageConfig.cflags = [
     .define("LOAD_TIF", to: "1"),
     .define("LOAD_XPM", to: "1"),
     .define("LOAD_XV", to: "1"),
+    .define("DLL_EXPORT", to: "1")
 ]
 
 let package = Package(
     name: "SDL_image",
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
-        .library(name: "SDL_image", type: imageConfig.libraryType, targets: ["SDL_image"]),
+        .library(name: "SDL_image", type: .dynamic, targets: ["SDL_image"]),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
