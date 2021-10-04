@@ -6,7 +6,7 @@ import Foundation
 
 struct TargetConfiguration {
     var name : String
-    var cflags : [CSetting] = []
+    var cflags : [CSetting] = [.unsafeFlags(["-Wno-everything"])]
     var lflags : [LinkerSetting] = []
     var sourcePaths : [String] = []
     var excludePaths : [String] = []
@@ -63,11 +63,10 @@ func excludePaths(config : TargetConfiguration) -> [String] {
 
 #if os(macOS)
 
-jpegConfig.cflags = [
-    // .unsafeFlags(["-I./Include"]),  // <jpeglib.h>
+jpegConfig.cflags += [
 ]
 
-zlibConfig.cflags = [
+zlibConfig.cflags += [
     // configure sets these.
     .define("HAVE_UNISTD_H", to: "1"),
     .define("HAVE_STDARG_H", to: "1")
@@ -77,9 +76,8 @@ zlibConfig.cflags = [
 
 #elseif os(Windows)
 
-tiffConfig.cflags = [
+tiffConfig.cflags += [
     .define("Z_SOLO", to: "1"),
-//    .unsafeFlags(["-I../external_zlib/Include"]),  // "zlib.h"
 ]
 
 #endif
@@ -276,7 +274,7 @@ imageConfig.sourcePaths = [
     "src/IMG_xxx.c",
 ]
 
-imageConfig.cflags = [
+imageConfig.cflags += [
     .define("SDL_IMAGE_USE_COMMON_BACKEND", to: "1"),
     .define("LOAD_BMP", to: "1"),
     .define("LOAD_GIF", to: "1"),
