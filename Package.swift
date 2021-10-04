@@ -2,19 +2,64 @@
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
+import Foundation
 
 struct TargetConfiguration {
+    var name : String
     var cflags : [CSetting] = []
     var lflags : [LinkerSetting] = []
     var sourcePaths : [String] = []
     var excludePaths : [String] = []
 }
 
-var pngConfig = TargetConfiguration()
-var jpegConfig = TargetConfiguration()
-var tiffConfig = TargetConfiguration()
-var zlibConfig = TargetConfiguration()
-var imageConfig = TargetConfiguration()
+var pngConfig = TargetConfiguration(name: "libpng")
+var jpegConfig = TargetConfiguration(name: "libjpeg")
+var tiffConfig = TargetConfiguration(name: "libtiff")
+var zlibConfig = TargetConfiguration(name: "external_zlib")
+var imageConfig = TargetConfiguration(name: "SDL_image")
+
+/// returns the file URL that contains this file, Package.swift.
+var packageURL : URL = {
+    let processInfo = ProcessInfo.processInfo
+    if let manifestPath = processInfo.environment["SWIFT_MANIFEST_PATH"] {
+        return URL(fileURLWithPath: manifestPath).deletingLastPathComponent()
+    }
+    return URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+}()
+
+func cachedSources(targetURL: URL) -> [String] {
+    let url = URL(fileURLWithPath: "src.cache", relativeTo: targetURL)
+    let text = String(data: (try? Data(contentsOf: url)) ?? Data(), encoding: .utf8)
+    return text?.components(separatedBy: .newlines) ?? []
+}
+
+func excludePaths(config : TargetConfiguration) -> [String] {
+    // 1. don't exclude any explicitly included source paths.
+    // 2. don't exclude any source paths that are in explicitly included directories.
+    // currently this code is very sensitive to the current working directory.
+    let targetURL = URL(fileURLWithPath: "Sources/\(config.name)", relativeTo: packageURL)
+    // print("targetURL = \(targetURL.path)")
+    let fileManager = FileManager.default
+    func isDirectory(_ path : String) -> Bool {
+        var dir : ObjCBool = false
+        let url = URL(fileURLWithPath: path, relativeTo: targetURL).resolvingSymlinksInPath()
+        return fileManager.fileExists(atPath: url.path, isDirectory: &dir) && dir.boolValue
+    }
+    let sourcePaths = config.sourcePaths
+    let sourceDirectories = sourcePaths.filter(isDirectory).map { $0 + "/" }
+    // print("sourceDirectories:")
+    // print(sourceDirectories.joined(separator: "\n"))
+    func inIncludedDirectory(_ path : String) -> Bool {
+        for dir in sourceDirectories {
+            if path.hasPrefix(dir) { return true }
+        }
+        return false
+    }
+    let sources = Set(sourcePaths)
+    return cachedSources(targetURL: targetURL).filter { path in
+        return !path.isEmpty && !sources.contains(path) && !inIncludedDirectory(path)
+    }
+}
 
 #if os(macOS)
 
@@ -58,6 +103,10 @@ pngConfig.sourcePaths = [
     "src/pngwtran.c",
     "src/pngwutil.c",
 ]
+
+pngConfig.excludePaths = excludePaths(config: pngConfig)
+//print("pngConfig.excludePaths:")
+//print(pngConfig.excludePaths.joined(separator: "\n"))
 
 jpegConfig.sourcePaths = [
    "src/jaricom.c",
@@ -121,6 +170,8 @@ jpegConfig.sourcePaths = [
    "src/wrtarga.c",
 ]
 
+jpegConfig.excludePaths = excludePaths(config: jpegConfig)
+
 tiffConfig.sourcePaths = [
     "src/libtiff/tif_aux.c",
     "src/libtiff/tif_close.c",
@@ -181,6 +232,8 @@ imageConfig.lflags = [
 
 #endif
 
+tiffConfig.excludePaths = excludePaths(config: tiffConfig)
+
 zlibConfig.sourcePaths = [
     "src/adler32.c",
     "src/compress.c",
@@ -198,6 +251,10 @@ zlibConfig.sourcePaths = [
     "src/uncompr.c",
     "src/zutil.c",
 ]
+
+zlibConfig.excludePaths = excludePaths(config: zlibConfig)
+//print("excludePaths:")
+//print(zlibConfig.excludePaths.joined(separator: "\n"))
 
 imageConfig.sourcePaths = [
     "src/IMG.c",
