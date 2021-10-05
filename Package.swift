@@ -27,10 +27,28 @@ var packageURL : URL = {
     return URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
 }()
 
-func cachedSources(targetURL: URL) -> [String] {
-    let url = URL(fileURLWithPath: "src.cache", relativeTo: targetURL)
-    let text = String(data: (try? Data(contentsOf: url)) ?? Data(), encoding: .utf8)
-    return text?.components(separatedBy: .newlines) ?? []
+let fileManager = FileManager.default
+
+func find(_ name : String, base: URL? = nil) -> [String] {
+    var results : [String] = []
+    func recurse(_ dir : String) {
+        let root = URL(fileURLWithPath: dir, relativeTo: base).resolvingSymlinksInPath()
+        let contents = (try? fileManager.contentsOfDirectory(atPath: root.path)) ?? []
+        for path in contents {
+            var isDir : ObjCBool = false
+            let realPath = URL(fileURLWithPath: path, relativeTo: root).resolvingSymlinksInPath().path
+            if fileManager.fileExists(atPath: realPath, isDirectory: &isDir) {
+                let entry = dir + "/" + path
+                if isDir.boolValue {
+                    recurse(entry)
+                } else {
+                    results.append(entry)
+                }
+            }
+        }
+    }
+    recurse(name)
+    return results
 }
 
 func excludePaths(config : TargetConfiguration) -> [String] {
@@ -39,7 +57,6 @@ func excludePaths(config : TargetConfiguration) -> [String] {
     // currently this code is very sensitive to the current working directory.
     let targetURL = URL(fileURLWithPath: "Sources/\(config.name)", relativeTo: packageURL)
     // print("targetURL = \(targetURL.path)")
-    let fileManager = FileManager.default
     func isDirectory(_ path : String) -> Bool {
         var dir : ObjCBool = false
         let url = URL(fileURLWithPath: path, relativeTo: targetURL).resolvingSymlinksInPath()
@@ -47,8 +64,6 @@ func excludePaths(config : TargetConfiguration) -> [String] {
     }
     let sourcePaths = config.sourcePaths
     let sourceDirectories = sourcePaths.filter(isDirectory).map { $0 + "/" }
-    // print("sourceDirectories:")
-    // print(sourceDirectories.joined(separator: "\n"))
     func inIncludedDirectory(_ path : String) -> Bool {
         for dir in sourceDirectories {
             if path.hasPrefix(dir) { return true }
@@ -56,9 +71,14 @@ func excludePaths(config : TargetConfiguration) -> [String] {
         return false
     }
     let sources = Set(sourcePaths)
-    return cachedSources(targetURL: targetURL).filter { path in
-        return !path.isEmpty && !sources.contains(path) && !inIncludedDirectory(path)
+    var excludes : [String] = []
+    let targetContents = (try? fileManager.contentsOfDirectory(atPath: targetURL.path)) ?? []
+    for name in targetContents.filter(isDirectory) {
+        excludes += find(name, base: targetURL).filter { path in
+            !path.isEmpty && !sources.contains(path) && !inIncludedDirectory(path)
+        }
     }
+    return excludes
 }
 
 #if os(macOS)
