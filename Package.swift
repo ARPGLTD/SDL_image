@@ -21,8 +21,8 @@ var imageConfig = TargetConfiguration(name: "SDL_image")
 /// returns the file URL that contains this file, Package.swift.
 var packageURL : URL = {
     let processInfo = ProcessInfo.processInfo
-    if let manifestPath = processInfo.environment["SWIFT_MANIFEST_PATH"] {
-        return URL(fileURLWithPath: manifestPath).deletingLastPathComponent()
+    if let packageRoot = processInfo.environment["SWIFT_PACKAGE_ROOT"] {
+        return URL(fileURLWithPath: packageRoot)
     }
     return URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
 }()
