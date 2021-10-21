@@ -1,16 +1,14 @@
 {
-  "object": {
-    "pins": [
-      {
-        "package": "SDL",
-        "repositoryURL": "git@github.com:ARPGLTD/SDL.git",
-        "state": {
-          "branch": "SwiftPackage",
-          "revision": "b3014ccea6147a4d2243401be6d8225a1e0dac76",
-          "version": null
-        }
+  "pins" : [
+    {
+      "identity" : "sdl",
+      "kind" : "remoteSourceControl",
+      "location" : "git@github.com:ARPGLTD/SDL.git",
+      "state" : {
+        "branch" : "SwiftPackage",
+        "revision" : "b68db58ca0186fc92e06d798611885a576b3eb33"
       }
-    ]
-  },
-  "version": 1
+    }
+  ],
+  "version" : 2
 }
