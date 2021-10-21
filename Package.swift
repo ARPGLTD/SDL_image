@@ -1,4 +1,4 @@
-// swift-tools-version:5.4
+// swift-tools-version:5.6
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -19,13 +19,7 @@ var zlibConfig = TargetConfiguration(name: "external_zlib")
 var imageConfig = TargetConfiguration(name: "SDL_image")
 
 /// returns the file URL that contains this file, Package.swift.
-var packageURL : URL = {
-    let processInfo = ProcessInfo.processInfo
-    if let packageRoot = processInfo.environment["SWIFT_PACKAGE_ROOT"] {
-        return URL(fileURLWithPath: packageRoot)
-    }
-    return URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-}()
+var packageURL = URL(fileURLWithPath: Context.packageDirectory)
 
 let fileManager = FileManager.default
 
