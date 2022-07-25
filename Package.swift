@@ -88,6 +88,12 @@ zlibConfig.cflags += [
 
 #elseif os(Linux)
 
+imageConfig.lflags = [
+    .linkedLibrary("jpeg"),
+    .linkedLibrary("png"),
+    .linkedLibrary("tiff"),
+]
+
 #elseif os(Windows)
 
 tiffConfig.cflags += [
@@ -270,13 +276,16 @@ zlibConfig.excludePaths = excludePaths(config: zlibConfig)
 
 imageConfig.sourcePaths = [
     "src/IMG.c",
+    "src/IMG_avif.c",
     "src/IMG_bmp.c",
     "src/IMG_gif.c",
     "src/IMG_jpg.c",
+    "src/IMG_jxl.c",
     "src/IMG_lbm.c",
     "src/IMG_pcx.c",
     "src/IMG_png.c",
     "src/IMG_pnm.c",
+    "src/IMG_qoi.c",
     "src/IMG_svg.c",
     "src/IMG_tga.c",
     "src/IMG_tif.c",
@@ -319,42 +328,8 @@ let package = Package(
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
-            name: "libpng",
-            dependencies: ["external_zlib"],
-            exclude: pngConfig.excludePaths,
-            sources: pngConfig.sourcePaths,
-            publicHeadersPath: "Include",
-            cSettings: pngConfig.cflags,
-            linkerSettings: pngConfig.lflags            
-        ),
-        .target(
-            name: "libjpeg",
-            exclude: jpegConfig.excludePaths,
-            sources: jpegConfig.sourcePaths,
-            publicHeadersPath: "Include",
-            cSettings: jpegConfig.cflags,
-            linkerSettings: jpegConfig.lflags            
-        ),
-        .target(
-            name: "libtiff",
-            dependencies: ["external_zlib"],
-            exclude: tiffConfig.excludePaths,
-            sources: tiffConfig.sourcePaths,
-            publicHeadersPath: "Include",
-            cSettings: tiffConfig.cflags,
-            linkerSettings: tiffConfig.lflags            
-        ),
-        .target(
-            name: "external_zlib",
-            exclude: zlibConfig.excludePaths,
-            sources: zlibConfig.sourcePaths,
-            publicHeadersPath: "Include",
-            cSettings: zlibConfig.cflags,
-            linkerSettings: zlibConfig.lflags            
-        ),
-        .target(
             name: "SDL_image",
-            dependencies: ["SDL", "libpng", "libjpeg", "libtiff"],
+            dependencies: ["SDL"],
             exclude: imageConfig.excludePaths,
             sources: imageConfig.sourcePaths,
             publicHeadersPath: "Include",
