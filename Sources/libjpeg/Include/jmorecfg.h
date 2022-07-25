@@ -1,1 +1,1 @@
-../../../external/jpeg-9d/jmorecfg.h
+../../../external/jpeg/jmorecfg.h

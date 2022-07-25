@@ -1,1 +1,1 @@
-../../../external/jpeg-9d/jpeglib.h
+../../../external/jpeg/jpeglib.h

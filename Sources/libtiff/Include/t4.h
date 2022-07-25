@@ -1,1 +1,1 @@
-../../../external/tiff-4.2.0/libtiff/t4.h
+../../../external/libtiff/libtiff/t4.h

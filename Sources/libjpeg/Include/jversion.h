@@ -1,1 +1,1 @@
-../../../external/jpeg-9d/jversion.h
+../../../external/jpeg/jversion.h

@@ -1,1 +1,1 @@
-../../../external/jpeg-9d/jdct.h
+../../../external/jpeg/jdct.h

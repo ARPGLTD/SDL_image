@@ -1,1 +1,1 @@
-../../../external/jpeg-9d/jconfig.h
+../../../external/jpeg/jconfig.h

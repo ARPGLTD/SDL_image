@@ -1,1 +1,1 @@
-../../../external/zlib-1.2.11/zconf.h
+../../../external/zlib/zconf.h

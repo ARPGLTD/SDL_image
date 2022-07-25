@@ -1,1 +1,1 @@
-../../../external/libpng-1.6.37/pnglibconf.h
+../../../external/libpng/pnglibconf.h

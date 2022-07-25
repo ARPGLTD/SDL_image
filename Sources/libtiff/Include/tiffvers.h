@@ -1,1 +1,1 @@
-../../../external/tiff-4.2.0/libtiff/tiffvers.h
+../../../external/libtiff/libtiff/tiffvers.h

@@ -1,1 +1,1 @@
-../../../external/jpeg-9d/jerror.h
+../../../external/jpeg/jerror.h

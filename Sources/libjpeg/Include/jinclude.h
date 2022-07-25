@@ -1,1 +1,1 @@
-../../../external/jpeg-9d/jinclude.h
+../../../external/jpeg/jinclude.h

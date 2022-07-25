@@ -1,1 +1,1 @@
-../../../external/jpeg-9d/cderror.h
+../../../external/jpeg/cderror.h

@@ -1,1 +1,1 @@
-../../../external/jpeg-9d/cdjpeg.h
+../../../external/jpeg/cdjpeg.h

@@ -1,1 +1,1 @@
-../../../external/zlib-1.2.11/zlib.h
+../../../external/zlib/zlib.h

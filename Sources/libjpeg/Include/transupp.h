@@ -1,1 +1,1 @@
-../../../external/jpeg-9d/transupp.h
+../../../external/jpeg/transupp.h

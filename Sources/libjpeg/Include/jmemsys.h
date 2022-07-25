@@ -1,1 +1,1 @@
-../../../external/jpeg-9d/jmemsys.h
+../../../external/jpeg/jmemsys.h
